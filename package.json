@@ -1,18 +1,13 @@
 {
-  "name": "cpa-server",
+  "name": "cpa-server-vercel",
   "version": "1.0.0",
   "private": true,
-  "description": "Servidor Express (HTTPS) para servir landings CPA",
-  "main": "server.js",
+  "description": "App Express (Vercel serverless) para servir landings CPA",
+  "main": "api/index.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "vercel dev"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "selfsigned": "^2.4.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.4"
+    "express": "^4.19.2"
   }
 }
