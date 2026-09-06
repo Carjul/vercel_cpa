@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gracias por tu pedido - Hondro Sol</title>
+<link rel="icon" type="image/png" href="/assets/images/ostex.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    html, body {
+        margin: 0;
+        padding: 0;
+        background: #eff2f6;
+        font-family: "Roboto", Arial, sans-serif;
+        color: #3c4456;
+    }
+    .inner {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 18px;
+    }
+    .top-line {
+        background: #fff;
+        box-shadow: 0 2px 10px rgba(0,0,0,.06);
+    }
+    .top-line .inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 70px;
+    }
+    .logo {
+        font-size: 28px;
+        font-weight: 700;
+        color: #33a199;
+        letter-spacing: .5px;
+    }
+    .content {
+        padding: 50px 0 60px;
+    }
+    .check-wrap {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+    .check-circle {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: #33a199;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .check-circle svg {
+        width: 36px;
+        height: 36px;
+    }
+    h1 {
+        text-align: center;
+        font-size: 30px;
+        font-weight: 500;
+        margin: 0 0 12px;
+        color: #3c4456;
+    }
+    .lead {
+        text-align: center;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #6c7588;
+        max-width: 520px;
+        margin: 0 auto 40px;
+    }
+    .order-card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.08);
+        padding: 30px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+    .order-card img {
+        width: 120px;
+        max-width: 35%;
+        flex-shrink: 0;
+    }
+    .order-card__info {
+        flex: 1;
+    }
+    .order-card__name {
+        font-size: 20px;
+        font-weight: 700;
+        color: #3c4456;
+        margin-bottom: 6px;
+    }
+    .order-card__desc {
+        font-size: 13px;
+        color: #888e9d;
+        margin-bottom: 14px;
+    }
+    .order-card__price {
+        font-size: 26px;
+        font-weight: 700;
+        color: #f3622a;
+    }
+    .order-card__oldprice {
+        font-size: 15px;
+        color: #b3b8c4;
+        text-decoration: line-through;
+        margin-left: 8px;
+    }
+    .order-card__badge {
+        display: inline-block;
+        margin-top: 10px;
+        background: #eafaf3;
+        color: #33a199;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 5px 12px;
+        border-radius: 20px;
+    }
+    .section-title {
+        text-align: center;
+        font-size: 20px;
+        font-weight: 500;
+        color: #3c4456;
+        margin: 0 0 24px;
+    }
+    .steps {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 50px;
+    }
+    .step {
+        flex: 1;
+        background: #fff;
+        border-radius: 12px;
+        padding: 22px 16px;
+        text-align: center;
+        box-shadow: 0 4px 14px rgba(0,0,0,.05);
+    }
+    .step__num {
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 50%;
+        background: #33a199;
+        color: #fff;
+        font-weight: 700;
+        margin: 0 auto 12px;
+    }
+    .step__title {
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+        color: #3c4456;
+    }
+    .step__text {
+        font-size: 13px;
+        color: #888e9d;
+        line-height: 1.5;
+    }
+    .benefits {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 50px;
+    }
+    .benefit {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(0,0,0,.05);
+    }
+    .benefit__title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #33a199;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+    .benefit__text {
+        font-size: 13px;
+        color: #888e9d;
+        line-height: 1.5;
+    }
+    .doctor-card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.08);
+        padding: 30px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 50px;
+    }
+    .doctor-card img {
+        width: 110px;
+        border-radius: 12px;
+        flex-shrink: 0;
+        object-fit: cover;
+        max-height: 140px;
+    }
+    .doctor-card__name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #3c4456;
+        margin-bottom: 6px;
+    }
+    .doctor-card__text {
+        font-size: 13px;
+        color: #888e9d;
+        line-height: 1.6;
+    }
+    footer {
+        background: #fff;
+        padding: 20px 0;
+    }
+    footer p {
+        text-align: center;
+        font-size: 12px;
+        color: #a3a8b5;
+        margin: 0;
+        line-height: 1.6;
+    }
+    @media (max-width: 640px) {
+        .order-card {
+            flex-direction: column;
+            text-align: center;
+        }
+        .steps {
+            flex-direction: column;
+        }
+        .benefits {
+            grid-template-columns: 1fr;
+        }
+        .doctor-card {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+</head>
+<body>
+
+    <div class="top-line">
+        <div class="inner">
+            <span class="logo">Hondro Sol</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="inner">
+
+            <div class="check-wrap">
+                <div class="check-circle">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <h1>¡Gracias por tu pedido!</h1>
+            <p class="lead">
+                Hemos recibido tu solicitud correctamente. Uno de nuestros asesores
+                se pondrá en contacto contigo por teléfono en breve para confirmar
+                los detalles de tu pedido.
+            </p>
+
+            <div class="order-card">
+                <img src="../assets/images/ostex.png" alt="Hondro Sol">
+                <div class="order-card__info">
+                    <div class="order-card__name">Hondro Sol</div>
+                    <div class="order-card__desc">Crema para tratar el dolor articular</div>
+                    <div>
+                        <span class="order-card__price">39 eur</span>
+                        <span class="order-card__oldprice">78 eur</span>
+                    </div>
+                    <span class="order-card__badge">50% de descuento aplicado</span>
+                </div>
+            </div>
+
+            <div class="section-title">¿Qué sigue ahora?</div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step__num">1</div>
+                    <div class="step__title">Confirmación</div>
+                    <div class="step__text">Un asesor te llamará para confirmar tus datos y tu pedido.</div>
+                </div>
+                <div class="step">
+                    <div class="step__num">2</div>
+                    <div class="step__title">Preparación</div>
+                    <div class="step__text">Preparamos tu pedido de Hondro Sol para el envío.</div>
+                </div>
+                <div class="step">
+                    <div class="step__num">3</div>
+                    <div class="step__title">Entrega</div>
+                    <div class="step__text">Recibes Hondro Sol cómodamente en tu domicilio.</div>
+                </div>
+            </div>
+
+            <div class="section-title">Beneficios de Hondro Sol</div>
+            <div class="benefits">
+                <div class="benefit">
+                    <div class="benefit__title">Analgético</div>
+                    <div class="benefit__text">Elimina el dolor y alivia la hinchazón.</div>
+                </div>
+                <div class="benefit">
+                    <div class="benefit__title">Antiséptico</div>
+                    <div class="benefit__text">Tiene un efecto bactericida y antiinflamatorio.</div>
+                </div>
+                <div class="benefit">
+                    <div class="benefit__title">Restaura</div>
+                    <div class="benefit__text">Fibras musculares y movilidad del cartílago.</div>
+                </div>
+                <div class="benefit">
+                    <div class="benefit__title">Detecta</div>
+                    <div class="benefit__text">La inflamación y la elimina, deteniendo la destrucción de las articulaciones.</div>
+                </div>
+            </div>
+
+            <div class="doctor-card">
+                <img src="../assets/images/doctor-bg.jpg" alt="Recomendación del doctor">
+                <div>
+                    <div class="doctor-card__name">Recomendado por especialistas</div>
+                    <div class="doctor-card__text">
+                        Hondro Sol es recomendado en el cuidado diario de las articulaciones,
+                        ayudando a aliviar el dolor y a mejorar la movilidad de forma natural.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <div class="inner">
+            <p>
+                Al completar el formulario, usted acepta el procesamiento de sus datos
+                personales de acuerdo con nuestra política de privacidad.
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
