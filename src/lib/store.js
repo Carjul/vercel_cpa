@@ -1,97 +1,92 @@
 /*
- * Store de visitantes en Vercel Blob.
- * Guarda un único archivo JSON (visitors.json) que persiste y se comparte
- * entre invocaciones serverless. No requiere base de datos.
+ * Store de visitantes en MongoDB.
+ * Lee la cadena de conexión desde una variable de entorno.
+ * Acepta cualquiera de estos nombres: MONGO_URI, MONGODB_URI, MONGO_URL.
  *
- * Requiere la variable de entorno BLOB_READ_WRITE_TOKEN (Vercel la inyecta
- * automáticamente al conectar un Blob store al proyecto).
+ * Colección: "visitors" (un documento por visitante, _id = visitorId).
  */
-const { put, list } = require("@vercel/blob");
+const { MongoClient } = require("mongodb");
 
-const FILE = "visitors.json";
-const ONLINE_WINDOW_MS = 45 * 1000;        // se considera "en línea" si hubo ping hace <45s
-const PRUNE_MS = 24 * 60 * 60 * 1000;      // descarta visitantes con más de 24h sin actividad
+const URI =
+    process.env.MONGO_URI ||
+    process.env.MONGODB_URI ||
+    process.env.MONGO_URL ||
+    "";
+const DB_NAME = process.env.MONGO_DB || "tracking";
+const COLLECTION = "visitors";
 
-async function getData() {
-    try {
-        const { blobs } = await list({ prefix: FILE });
-        const found = blobs.find((b) => b.pathname === FILE);
-        if (!found) return { visitors: {} };
-        // cache:no-store + query para evitar leer una versión cacheada por el CDN.
-        const res = await fetch(found.url + "?t=" + Date.now(), { cache: "no-store" });
-        if (!res.ok) return { visitors: {} };
-        const data = await res.json();
-        return data && typeof data === "object" && data.visitors ? data : { visitors: {} };
-    } catch (e) {
-        console.error("getData error:", e);
-        return { visitors: {} };
+const ONLINE_WINDOW_MS = 45 * 1000;        // "en línea" si hubo ping hace <45s
+const PRUNE_MS = 24 * 60 * 60 * 1000;      // descarta visitantes con +24h sin actividad
+
+// Reutiliza la conexión entre invocaciones serverless (evita abrir muchas conexiones).
+function getClientPromise() {
+    if (!URI) {
+        throw new Error("Falta la variable de entorno MONGO_URI (o MONGODB_URI).");
     }
+    if (!global._mongoClientPromise) {
+        const client = new MongoClient(URI, { maxPoolSize: 5 });
+        global._mongoClientPromise = client.connect();
+    }
+    return global._mongoClientPromise;
 }
 
-async function saveData(data) {
-    await put(FILE, JSON.stringify(data), {
-        access: "public",
-        contentType: "application/json",
-        addRandomSuffix: false,
-        allowOverwrite: true,
-    });
-}
-
-function prune(data) {
-    const now = Date.now();
-    Object.keys(data.visitors).forEach((id) => {
-        if (now - (data.visitors[id].lastSeen || 0) > PRUNE_MS) {
-            delete data.visitors[id];
-        }
-    });
-    return data;
+async function coll() {
+    const client = await getClientPromise();
+    return client.db(DB_NAME).collection(COLLECTION);
 }
 
 // Registra o actualiza un visitante (también sirve de heartbeat de presencia).
 async function recordVisit(visit) {
-    const data = prune(await getData());
+    const c = await coll();
     const now = Date.now();
-    const existing = data.visitors[visit.id];
 
-    if (existing) {
-        existing.lastSeen = now;
-        existing.hits = (existing.hits || 1) + 1;
-        // refresca datos por si cambió de red/página
-        existing.ip = visit.ip || existing.ip;
-        existing.country = visit.country || existing.country;
-        existing.city = visit.city || existing.city;
-        existing.region = visit.region || existing.region;
-        existing.timezone = visit.timezone || existing.timezone;
-        existing.page = visit.page || existing.page;
-        existing.userAgent = visit.userAgent || existing.userAgent;
-    } else {
-        data.visitors[visit.id] = {
-            id: visit.id,
-            ip: visit.ip || "",
-            country: visit.country || "",
-            city: visit.city || "",
-            region: visit.region || "",
-            timezone: visit.timezone || "",
-            page: visit.page || "",
-            userAgent: visit.userAgent || "",
-            firstSeen: now,   // hora de entrada
-            lastSeen: now,
-            hits: 1,
-        };
-    }
+    const set = { lastSeen: now };
+    ["ip", "country", "city", "region", "timezone", "page", "userAgent"].forEach(function (k) {
+        if (visit[k]) set[k] = visit[k];
+    });
 
-    await saveData(data);
-    return data.visitors[visit.id];
+    await c.updateOne(
+        { _id: visit.id },
+        {
+            $set: set,
+            $setOnInsert: { firstSeen: now },   // hora de entrada (solo al crear)
+            $inc: { hits: 1 },
+        },
+        { upsert: true }
+    );
+
+    return { id: visit.id };
 }
 
 // Devuelve la lista de visitantes ordenada por última actividad, con bandera "online".
 async function listVisitors() {
-    const data = prune(await getData());
+    const c = await coll();
     const now = Date.now();
-    const visitors = Object.values(data.visitors)
-        .map((v) => ({ ...v, online: now - (v.lastSeen || 0) <= ONLINE_WINDOW_MS }))
-        .sort((a, b) => b.lastSeen - a.lastSeen);
-    const onlineCount = visitors.filter((v) => v.online).length;
+
+    // Limpia visitantes viejos.
+    await c.deleteMany({ lastSeen: { $lt: now - PRUNE_MS } });
+
+    const docs = await c
+        .find({}, { projection: {}, sort: { lastSeen: -1 }, limit: 1000 })
+        .toArray();
+
+    const visitors = docs.map(function (d) {
+        return {
+            id: d._id,
+            ip: d.ip || "",
+            country: d.country || "",
+            city: d.city || "",
+            region: d.region || "",
+            timezone: d.timezone || "",
+            page: d.page || "",
+            firstSeen: d.firstSeen || null,
+            lastSeen: d.lastSeen || null,
+            hits: d.hits || 1,
+            online: now - (d.lastSeen || 0) <= ONLINE_WINDOW_MS,
+        };
+    });
+
+    const onlineCount = visitors.filter(function (v) { return v.online; }).length;
     return { onlineCount, total: visitors.length, visitors, serverTime: now };
 }
 
