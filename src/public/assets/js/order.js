@@ -31,7 +31,7 @@
 
     function buildPayload(form) {
         var formData = new FormData(form);
-        var phone = (formData.get("phone") || "").trim();
+        var phone = (formData.get("phone") || "").trim().replace(/\s+/g, "");
         var name = (formData.get("name") || "").trim();
 
         return {
@@ -120,10 +120,51 @@
             });
     }
 
+    // ¿El formulario tiene nombre y teléfono con datos? (no solo el prefijo)
+    function isReady(form) {
+        var nameEl = form.querySelector('[name="name"]');
+        var phoneEl = form.querySelector('[name="phone"]');
+        var nameOk = nameEl && nameEl.value.trim().length > 0;
+        var phoneDigits = phoneEl ? phoneEl.value.replace(/\D/g, "") : "";
+        var phoneOk = phoneDigits.length >= 6; // hay número real, no solo el prefijo
+        return !!(nameOk && phoneOk);
+    }
+
+    // Refleja el estado sin cambiar la apariencia (solo atributo/clase para lógica).
+    function refreshState(form) {
+        var ready = isReady(form);
+        var btn = form.querySelector('button[type="submit"], button');
+        if (btn) {
+            btn.setAttribute("aria-disabled", ready ? "false" : "true");
+        }
+        form.classList.toggle("form-ready", ready);
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll("form.orderForm").forEach(function (form) {
+            var nameEl = form.querySelector('[name="name"]');
+            var phoneEl = form.querySelector('[name="phone"]');
+            var btn = form.querySelector('button[type="submit"], button');
+
+            var onChange = function () { refreshState(form); };
+            nameEl && nameEl.addEventListener("input", onChange);
+            phoneEl && phoneEl.addEventListener("input", onChange);
+            phoneEl && phoneEl.addEventListener("blur", onChange);
+            refreshState(form);
+
+            // Bloquea el clic si aún está vacío (el botón se ve igual, pero no ejecuta el envío).
+            btn && btn.addEventListener("click", function (e) {
+                if (!isReady(form)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+
             form.addEventListener("submit", function (e) {
                 e.preventDefault();
+                if (!isReady(form)) {
+                    return; // no hace nada mientras nombre o teléfono estén vacíos
+                }
                 sendOrder(form);
             });
         });
