@@ -20,10 +20,20 @@ function getHome(req, res) {
 }
 
 function getThanks(req, res) {
+    // Sin barra final el navegador resuelve los assets relativos contra la raíz
+    // (/assets/...) en vez de /thanks/assets/..., provocando 404. Redirigimos.
+    if (!req.path.endsWith("/")) {
+        return res.redirect(301, "/thanks/");
+    }
     res.sendFile(path.join(PUBLIC_DIR, "thanks", "index.html"));
 }
 
 function getBlog(req, res) {
+    // Mismo motivo que en getThanks: sin barra final los assets relativos
+    // resuelven contra la raíz y dan 404.
+    if (!req.path.endsWith("/")) {
+        return res.redirect(301, "/blog/");
+    }
     res.sendFile(path.join(PUBLIC_DIR, "blog", "index.html"));
 }
 
