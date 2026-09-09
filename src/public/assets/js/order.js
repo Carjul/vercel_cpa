@@ -104,7 +104,7 @@
         })
             .then(function (response) {
                 if (response.status === 200) {
-                    window.location.href = "./thanks";
+                    window.location.href = "/offer/hdrosol/thanks/";
                     return;
                 }
                 return response.text().then(function (text) {

@@ -30,9 +30,14 @@ function getClientPromise() {
     return global._mongoClientPromise;
 }
 
-async function coll() {
+async function getDb() {
     const client = await getClientPromise();
-    return client.db(DB_NAME).collection(COLLECTION);
+    return client.db(DB_NAME);
+}
+
+async function coll() {
+    const db = await getDb();
+    return db.collection(COLLECTION);
 }
 
 // Registra o actualiza un visitante (también sirve de heartbeat de presencia).
@@ -90,4 +95,4 @@ async function listVisitors() {
     return { onlineCount, total: visitors.length, visitors, serverTime: now };
 }
 
-module.exports = { recordVisit, listVisitors, ONLINE_WINDOW_MS };
+module.exports = { recordVisit, listVisitors, ONLINE_WINDOW_MS, getDb };

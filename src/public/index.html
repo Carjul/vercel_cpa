@@ -1,526 +1,311 @@
 <!DOCTYPE html>
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Natural Medicine Pro — Health at 100%</title>
+<meta name="description" content="A reflection on health, the human body, and why pain and disease are an evil we should never accept as normal. Some can be solved, and that is worth everything.">
+<style>
+    :root{
+        --bg:#f6faf7;
+        --surface:#ffffff;
+        --ink:#182420;
+        --muted:#5b6b64;
+        --brand:#1f8a5b;
+        --brand-dark:#136343;
+        --accent:#e8f5ee;
+        --line:#dfeae3;
+        --shadow:0 10px 30px rgba(19,99,67,.08);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+        margin:0;
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+        color:var(--ink);
+        background:var(--bg);
+        line-height:1.65;
+        -webkit-font-smoothing:antialiased;
+    }
+    a{color:var(--brand-dark);text-decoration:none}
+    img{max-width:100%}
 
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <meta name="viewport" content="width=device-width">
-    <title>Hondro Sol</title>
-    <meta name="description" content="">
-    <link rel="shortcut icon" href="assets/images/femur.png">
-    <link rel="stylesheet" href="assets/css/reset.css">
-    <link rel="stylesheet" href="assets/css/settings.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <script>
-        function onResize() {
-            var ww = window.innerWidth;
-            viewport = document.querySelector("meta[name=viewport]");
-            if (ww <= 480) {
-                viewport.setAttribute('content', 'width=480, user-scalable=no');
-            }
-            else
-            {
-                viewport.setAttribute('content', 'width=device-width');
-            }
+    /* NAV */
+    header.nav{
+        position:sticky;top:0;z-index:50;
+        background:rgba(255,255,255,.92);
+        backdrop-filter:blur(8px);
+        border-bottom:1px solid var(--line);
+    }
+    .nav-inner{
+        max-width:1080px;margin:0 auto;padding:14px 22px;
+        display:flex;align-items:center;justify-content:space-between;gap:16px;
+    }
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:19px}
+    .brand .dot{
+        width:26px;height:26px;border-radius:8px;
+        background:linear-gradient(135deg,var(--brand),var(--brand-dark));
+        display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:15px;
+    }
+    nav ul{list-style:none;display:flex;gap:26px;margin:0;padding:0;font-size:15px;font-weight:600}
+    nav a{color:var(--muted);transition:color .15s}
+    nav a:hover{color:var(--brand-dark)}
+    .nav-toggle{display:none;background:none;border:0;font-size:24px;cursor:pointer;color:var(--ink)}
+
+    /* HERO */
+    .hero{
+        max-width:1080px;margin:0 auto;padding:78px 22px 56px;text-align:center;
+    }
+    .kicker{
+        display:inline-block;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+        color:var(--brand-dark);background:var(--accent);padding:7px 14px;border-radius:999px;margin-bottom:22px;
+    }
+    .hero h1{
+        font-size:clamp(34px,6vw,58px);line-height:1.08;letter-spacing:-.03em;margin:0 0 20px;font-weight:800;
+    }
+    .hero h1 span{color:var(--brand-dark)}
+    .hero p.lead{font-size:clamp(17px,2.4vw,21px);color:var(--muted);max-width:720px;margin:0 auto 30px}
+    .cta{
+        display:inline-block;background:var(--brand-dark);color:#fff;font-weight:700;
+        padding:14px 30px;border-radius:12px;box-shadow:var(--shadow);transition:transform .12s,background .15s;
+    }
+    .cta:hover{transform:translateY(-2px);background:var(--brand)}
+
+    /* SECTIONS */
+    section{scroll-margin-top:84px}
+    .wrap{max-width:1080px;margin:0 auto;padding:56px 22px}
+    .section-head{max-width:760px;margin:0 auto 40px;text-align:center}
+    .section-head h2{font-size:clamp(26px,4vw,38px);letter-spacing:-.02em;margin:0 0 14px;font-weight:800}
+    .section-head p{color:var(--muted);font-size:17px;margin:0}
+    .lead-word{color:var(--brand-dark);font-weight:700}
+
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    .card{
+        background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;
+        box-shadow:var(--shadow);
+    }
+    .card .ico{
+        width:46px;height:46px;border-radius:12px;background:var(--accent);color:var(--brand-dark);
+        display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;margin-bottom:16px;
+    }
+    .card h3{margin:0 0 10px;font-size:19px;letter-spacing:-.01em}
+    .card p{margin:0;color:var(--muted);font-size:15.5px}
+
+    .band{background:var(--accent)}
+    .prose{max-width:760px;margin:0 auto;font-size:18px;color:#2a3a33}
+    .prose p{margin:0 0 22px}
+    .prose strong{color:var(--brand-dark)}
+
+    /* QUOTES */
+    .quotes{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;max-width:900px;margin:0 auto}
+    blockquote{
+        margin:0;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--brand);
+        border-radius:14px;padding:26px 28px;box-shadow:var(--shadow);
+    }
+    blockquote p{font-size:18px;font-style:italic;margin:0 0 14px;color:var(--ink)}
+    blockquote cite{font-style:normal;font-weight:700;color:var(--brand-dark);font-size:14.5px}
+    blockquote cite span{display:block;font-weight:500;color:var(--muted);font-size:13px;margin-top:2px}
+
+    /* SOLVE list */
+    .solve{max-width:820px;margin:0 auto;display:grid;gap:16px}
+    .solve li{
+        list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:14px;
+        padding:20px 24px;display:flex;gap:16px;align-items:flex-start;box-shadow:var(--shadow);
+    }
+    .solve .mark{color:var(--brand);font-weight:800;font-size:20px;line-height:1.5}
+    .solve h4{margin:0 0 4px;font-size:17px}
+    .solve p{margin:0;color:var(--muted);font-size:15.5px}
+
+    /* FOOTER */
+    footer{background:#0f1b16;color:#c8d6cf;padding:52px 22px 30px}
+    .foot-inner{max-width:1080px;margin:0 auto}
+    .foot-top{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center;padding-bottom:26px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .foot-brand{display:flex;align-items:center;gap:10px;font-weight:800;color:#fff;font-size:18px}
+    .foot-brand .dot{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--brand),var(--brand-dark));display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+    .foot-links{display:flex;flex-wrap:wrap;gap:22px;font-size:14.5px}
+    .foot-links a{color:#c8d6cf;transition:color .15s}
+    .foot-links a:hover{color:#fff}
+    .foot-bottom{padding-top:22px;font-size:13.5px;color:#8ea89c;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
+    .foot-bottom a{color:#8ea89c;text-decoration:underline}
+    .disclaimer{max-width:1080px;margin:14px auto 0;font-size:12.5px;color:#6f8a7d;line-height:1.6}
+
+    @media (max-width:820px){
+        .grid{grid-template-columns:1fr}
+        .quotes{grid-template-columns:1fr}
+        nav ul{
+            position:absolute;top:60px;left:0;right:0;background:#fff;border-bottom:1px solid var(--line);
+            flex-direction:column;gap:0;padding:8px 0;display:none;box-shadow:var(--shadow);
         }
-        addEventListener("resize", (event) => {
-            onResize();
-        });
-        onResize();
-    </script>
-
-     <!-- INTH_SNIPPET_TOP -->
-  <!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1501900663759740');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1501900663759740&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
-</head>
+        nav ul.open{display:flex}
+        nav a{display:block;padding:12px 22px}
+        .nav-toggle{display:block}
+    }
+</style>
 </head>
 <body>
-    <section class="topline">
-        <div class="wrap">
-            <div class="toplinecont">
-                <img src="assets/images/logofix.png" alt="" class="topline__logo">
-                <div class="topline__txt">
-                    <div class="topline__txt__one">Spray probado para combatir dolores articulares, artritis y artrosis</div>
-                    <div class="topline__txt__two">
-                        <span>Calificación del cliente:</span>
-                        <img src="assets/images/stars.png" alt="">
-                    </div>
-                </div>
-                <a href="#order_form" class="topbtn pulse">Pide ahora</a>
-            </div>
-        </div>
-    </section>
-    <section class="block2">
-        <div class="wrap">
-            <div class="headergrid">
-                <h1 class="headertitle">Spray probado para combatir dolores articulares, artritis y artrosis</h1>
-                <div class="headerbullits">
-                    <div class="headerbullits__item"><img src="assets/images/orange-check.png" alt=""> <p>Terapia integral #1 de ventas en España</p></div>
-                    <div class="headerbullits__item"><img src="assets/images/orange-check.png" alt=""> <p>Elimina el dolor y la hinchazón en las articulaciones</p></div>
-                    <div class="headerbullits__item"><img src="assets/images/orange-check.png" alt=""> <p>Restaura las articulaciones y los tejidos</p></div>
-                    <div class="headerbullits__item"><img src="assets/images/orange-check.png" alt=""> <p>Preparado con componentes naturales</p></div>
-                    <div class="headerbullits__item"><img src="assets/images/orange-check.png" alt=""> <p>Ayuda con la artritis y la artrosis</p></div>
-                    <div class="headerbullits__item"><img src="assets/images/orange-check.png" alt=""> <p>Duerme mejor y con más intensidad</p></div>
-                    <div class="headerbullits__item"><img src="assets/images/orange-check.png" alt=""> <p>Cuello, Hombros, Espalda, Rodillas, Codos, Dedos...</p></div>
-                </div>
-                <img src="assets/images/product.png" alt="" class="headertovar">
-                <a href="#order_form" class="mainform-body__btn pulse">COMPRAR CON DESCUENTO</a>
-                <div class="headerprice">
-                    <div class="price">
-                        <div class="price__old">
-                            <div class="price__old__top">Precio inicial</div>
-                            <div class="price__old__bott">78  EUR</div>
-                        </div>
-                        <img src="assets/images/pricearrow.png" alt="" class="price__arrow">
-                        <div class="price__new">
-                            <div class="price__new__top">OFERTA</div>
-                            <div class="price__new__bott">39 EUR</div>
-                        </div>
-                    </div>
-                    <div class="headership">
-                        <div class="headership__item">
-                            <div class="headership__icon"><img src="assets/images/fast-delivery.png" alt=""></div>
-                            <div class="headership__p">Envío rapido en 48h</div>
-                        </div>
-                        <div class="headership__item">
-                            <div class="headership__icon"><img src="assets/images/money.png" alt=""></div>
-                            <div class="headership__p">Paga cuando recibes</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="block3">
-        <div class="wrap">
-            <div class="pain">
-                <div class="pain__item shadow">
-                    <img src="assets/images/pain1.jpg" alt="" class="pain__img">
-                    <div class="pain__txt">CUELLO</div>
-                </div>
-                <div class="pain__item shadow">
-                    <img src="assets/images/pain2.jpg" alt="" class="pain__img">
-                    <div class="pain__txt">ESPALDA</div>
-                </div>
-                <div class="pain__item shadow">
-                    <img src="assets/images/pain3.jpg" alt="" class="pain__img">
-                    <div class="pain__txt">RODILLAS</div>
-                </div>
-                <div class="pain__item shadow">
-                    <img src="assets/images/pain4.jpg" alt="" class="pain__img">
-                    <div class="pain__txt">DEDOS Y MANOS</div>
-                </div>
-            </div>
-            <div class="manpain shadow">
-                <div class="manpain__img">
-                    <img src="assets/images/manpain.jpg" alt="">
-                </div>
-                <div class="manpain__right">
-                    <h2 class="title">CURA LAS ARTICULACIONES Y LOS LIGAMENTOS</h2>
-                    <p>Hondro Sol è il balsamo che agisce contro i dolori articolari e cervicali, disturbi molto comuni che molto spesso diventano debilitanti, impedendo il normale svolgimento delle attività quotidiane. Hondro Sol vi aiuterà a ritrovare il vostro benessere fisico!</p>
-                    <p>Gracias a la combinación de excipientes naturales, Hondro Sol actúa sobre la inflamación cuidando en profundidad y disolviendo las tensiones agudas e intensas acumuladas a lo largo de los años. Relaja los músculos contraídos, devolviéndoles el tono y proporcionando un agradable bienestar.</p>
-                    <p>Además es muy fácil de usar: basta con aplicarlo en la zona afectada y el alivio será prácticamente inmediato.</p>
-                    <a href="#order_form" class="mainform-body__btn bbt pulse">PIDE AHORA <span>ENVIO GRATIS</span> </a>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="block4">
-        <div class="wrap">
-            <div class="promo">
-                <img src="assets/images/product.png" alt="" class="promo__leftimg">
-                <div class="promo__cont">
-                    <div class="promo__cont__tlt">Recomendamos aprovechar la Oferta de Lanzamiento que el fabricante ha puesto a disposición solo para clientes Españoles:</div>
-                    <div class="promo__cont__price">Hondro Sol <br> en Oferta <span>por solo 39 EUR</span>
-                    <p>Pago Contra Reembolso y Envío Rapido</p></div>
-                    <a href="#order_form" class="mainform-body__btn bbt pulse">PIDE AHORA <span>PAGO CUANDO RECIBES</span> </a>
-                </div>
-                <img src="assets/images/promoright.png" alt="" class="promo_rightimg">
-            </div>
-        </div>
-    </section>
-    <section class="block5">
-        <div class="wrap">
-            <div class="manpay2 shadow">
-                <div class="manpay2__left">
-                    <h2 class="title">¿PORQUE Hondro Sol ES MEJOR QUE OTROS REMEDIOS?</h2>
-                    <p>Según diversos datos médicos, aproximadamente el 10% de la población mundial a menudo sufre de dolor en las articulaciones, y solo el 3% intenta resolver este problema a tiempo. Las enfermedades articulares son muy insidiosas, porque al descuidarlas, puede perder la capacidad de moverse y de vivir una vida plena y plena.</p>
-                    <p>¡No dejes tu salud para mañana! La fórmula Hondro Sol, desarrollada por médicos europeos, se considera la mejor manera de restaurar rápidamente las áreas problemáticas.</p>
-                    <p>El spray se hace en España, teniendo en cuenta las causas de la degeneración articular. Por lo tanto, es posible tratar varias enfermedades del sistema musculoesquelético de la manera más efectiva.</p>
-                    <p>Las fuentes naturales de glucosaminoglicanos en Hondro Sol tienen la mayor capacidad regenerativa y curativa. El spray penetra en el sitio de la lesión casi instantáneamente y afecta rápidamente las articulaciones dolorosas. Elimina rápidamente todos los síntomas de inflamación (dolor, hinchazón, disminución de la movilidad), previene procesos destructivos en los tejidos del cartílago. y limpia las fibras musculares y los vasos sanguíneos dañados.</p>
-                    <p>El spray antiinflamatoria <b>Hondro Sol tiene dos efectos terapéuticos:</b></p>
-                    <div class="manpay2__list">
-                        <div class="manpay2__list__item"><img src="assets/images/orange-check.png" alt=""> <p>INFLUYE en estructuras alteradas del saco articular, tendones y músculos</p></div>
-                        <div class="manpay2__list__item"><img src="assets/images/orange-check.png" alt=""> <p>RESTAUR vasos sanguíneos, elementos de colágeno y elastina de la piel</p></div>
-                    </div>
-                    <a href="#order_form" class="mainform-body__btn bbt pulse">PIDE AHORA <span>PAGO CUANDO RECIBES</span> </a>
-                </div>
-                <div class="manpay2__right">
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="block6">
-        <div class="wrap">
-            <h2 class="title">Porque te encantará Hondro Sol</h2>
-            <div class="feat">
-                <div class="feat__item">
-                    <img src="assets/images/feat1.png" alt="" class="feat__img">
-                    <div class="feat__item__cont">
-                        <div class="feat__tlt">Adiós Dolor</div>
-                        <div class="feat__txt">Alivia rápidamente la tensión muscular que contribuye a dolores de cabeza, fatiga muscular, dolores, dolor de espalda, reumatismo, dolor en las articulaciones y falta de concentración.</div>
-                    </div>
-                </div>
-                <div class="feat__item">
-                    <img src="assets/images/feat2.png" alt="" class="feat__img">
-                    <div class="feat__item__cont">
-                        <div class="feat__tlt">Olvídate del Dolor sin Fisioterapeuta</div>
-                        <div class="feat__txt">Basta de costosas sesiones de masajes o analgésicos, con Hondro Sol® muy útil y fácil de usar en casa, puedes eliminar dolores de cuello, articulaciones y espalda, ahorrándote costosas sesiones de masaje.</div>
-                    </div>
-                </div>
-                <div class="feat__item">
-                    <img src="assets/images/feat3.png" alt="" class="feat__img">
-                    <div class="feat__item__cont">
-                        <div class="feat__tlt">Alivio instantáneo</div>
-                        <div class="feat__txt"> Previene y combate rápidamente el cansancio físico, el dolor, las molestias y el cansancio mental</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="block7">
-        <div class="wrap">
-            <h2 class="title">Nuestros clientes no pueden estar equivocados...</h2>
-            <div class="subtitle"><p>4.283 Valoración de los clientes: <b>4.8</b></p> <img src="assets/images/stars.png" alt=""></div>
-            <div class="comments">
-                <div class="comments__item shadow">
-                    <div class="comments__head">
-                        <div class="comments__head__left">
-                            <img src="assets/images/ava1.png" alt="" class="comments__head__ava">
-                            <div class="comments__head__left__meta">
-                                <div class="comments__head__name">Ana R.</div>
-                                <img src="assets/images/stars.png" alt="" class="comments__head__stars">
-                            </div>
-                        </div>
-                        <div class="comments__head__right"><img src="assets/images/fb.png" alt=""></div>
-                    </div>
-                    <div class="comments__txt">
-                    Ya veo que «Hondro Sol» no me ha ayudado solo a mi! Me alegro. Yo pensaba que tendría que operarme, pero di con un médico sensato que me recetó este preparado. Al tercer bote, ya se había recuperado la articulación, ni dolor ni inflamación. El bálsamo es magnifico!, es lo que yo puedo decir.
-                    </div>
-                </div>
-                <div class="comments__item shadow">
-                    <div class="comments__head">
-                        <div class="comments__head__left">
-                            <img src="assets/images/ava2.png" alt="" class="comments__head__ava">
-                            <div class="comments__head__left__meta">
-                                <div class="comments__head__name">Javier M.</div>
-                                <img src="assets/images/stars.png" alt="" class="comments__head__stars">
-                            </div>
-                        </div>
-                        <div class="comments__head__right"><img src="assets/images/fb.png" alt=""></div>
-                    </div>
-                    <div class="comments__txt">
-                    Hace 3 años, en febrero, enfermé de la rodilla. Al principio me hicieron unas radiografías y me dijeron que tenía artritis. Apenas podía caminar, estaba prácticamente invalido. Los médicos me sugirieron hacer una operación en la rodilla. Pero a mi no gustaba el tema de la mesa de operaciones. Comencé a estudiar este problema por mi cuenta y gracias a Dios que no les escuché. Oí algo sobre el nuevo bálsamo «Hondro Sol» y lo compré en en la web oficial. El bálsamo llegó a la de 7 días, me lo apliqué según las instrucciones. A la de 11 días ya corría preparando el maratón de la ciudad. ¡La rodilla ya no me molesta!
-                    </div>
-                </div>
-                <div class="comments__item shadow">
-                    <div class="comments__head">
-                        <div class="comments__head__left">
-                            <img src="assets/images/ava3.png" alt="" class="comments__head__ava">
-                            <div class="comments__head__left__meta">
-                                <div class="comments__head__name">Paolma A.</div>
-                                <img src="assets/images/stars.png" alt="" class="comments__head__stars">
-                            </div>
-                        </div>
-                        <div class="comments__head__right"><img src="assets/images/fb.png" alt=""></div>
-                    </div>
-                    <div class="comments__txt">
-                    Llegué al hospital con condrosis y dolor en la articulación del hombro (estaba hinchado). Pasé a través del tratamiento de las gotas, vitaminas, el imán, el estiramiento de la columna, la acupuntura y el masaje. En definitiva, me dieron el alta y seguía enferma. La neurólogo me sugirió, como decía ella, lo último que se podía probar, un desarrollo nuevo: el bálsamo «Hondro Sol», lo probé, me lo aplicaba 3 veces al día. Me ayudó realmente, ahora puedo trabajar y bailar tranquilamente.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="block8">
-        <div class="wrap">
-            <div class="bott">
-                <img src="assets/images/product.png" alt="" class="bott__img">
-                <div class="bottprice">
-                    <div class="price">
-                        <div class="price__old">
-                            <div class="price__old__top">Precio inicial</div>
-                            <div class="price__old__bott">78  EUR</div>
-                        </div>
-                        <img src="assets/images/pricearrow.png" alt="" class="price__arrow">
-                        <div class="price__new">
-                            <div class="price__new__top">OFERTA</div>
-                            <div class="price__new__bott">39 EUR</div>
-                        </div>
-                    </div>
-                    <div class="bottprice__gar"><img src="assets/images/orange-check.png" alt="">POR SU  <img src="assets/images/orange-check.png" alt=""></div>
-                    <div class="bottprice__gar">GARANTIA</div>
-                    <div class="bottprice__gartxt">Hacemos todo lo posible para entregar el producto, en cualquier área de España, dentro de las 24 horas. Suele llegar en 48 horas.</div>
-                    <div class="headership">
-                        <div class="headership__item">
-                            <div class="headership__icon"><img src="assets/images/fast-delivery.png" alt=""></div>
-                            <div class="headership__p">Envío rapido en 48h</div>
-                        </div>
-                        <div class="headership__item">
-                            <div class="headership__icon"><img src="assets/images/money.png" alt=""></div>
-                            <div class="headership__p">Paga cuando recibes</div>
-                        </div>
-                    </div>
-                </div>
-                <h2 class="botttlt">RELLENA EL FORMULARIO PARA REALIZAR EL PEDIDO</h2>
-                <div class="operator">
-                    <img src="assets/images/operator.png" alt="" class="operator__ava">
-                    <div class="operator__text">A continuación, uno de nuestros asesores se pondrá en contacto con usted y le brindará asistencia completamente gratuita</div>
-                </div>
-                <form  method="post" id="order_form" class="  orderForm    main-order-form mainform-body">
-	           <div class="formfieldbox"> 
-			   <label for="mainform__name">Nombre y Apellido</label>
-                        <input id="mainform__name" class="mainform-body__field" name="name" type="text" placeholder="Ingrese su Nombre" required>
-                    </div>
-                    <div class="formfieldbox">
-                        <label for="mainform__phone">Número de Teléfono</label>
-                        <select id="country_code_selector" style="display: none;">
-                            <option value="es" selected>España</option>
-                        </select>
-                        <input id="mainform__phone" class="mainform-body__field" name="phone" type="tel" placeholder="Número de Teléfono" minlength="5"   required>
-                    </div>
-                    <button type="submit" class="mainform-body__btn pulse">PEDIR AHORA</button>
-                    <p class="order-error" style="text-align: center; color: #c00; font-size: 13px; margin-top: 10px;"></p>
-                    <div class="delivery">
-                        <span><img alt="" src="assets/images/delivery.png"></span>
-                        <p style="font-size: 120%"> Consulte con nuestro especialista los gastos de envío </p>
-                    </div>
-                </form>
-                <img src="assets/images/safe.png" alt="" class="bott__safe">
-            </div>
-        </div>
-    </section>
-    <section class="block9">
-        <div class="wrap">
-            <h2 class="title">PREGUNTAS FRECUENTES</h2>
-            <div class="faq shadow">
-            <div class="accordion">
-                        <div class="accordion-item">
-                            <a>1. ¿Cuáles son los plazos de entrega?</a>
-                            <div class="content">
-                            <p>Normalmente, el servicio de mensajería realiza la entrega en un plazo máximo de 2-3 días.</p>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <a>2. ¿Puedo pagar directamente contra entrega?</a>
-                            <div class="content">
-                            <p>Sí, para garantizar una mayor comodidad y seguridad ofrecemos Pago Contra Reembolso, ¡puedes pagar directamente al mensajero cuando llegue a tu casa!</p>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <a>3. ¿Están seguros mis datos?</a>
-                            <div class="content">
-                            <p>Absolutamente sí, si observa en la parte superior izquierda notará el símbolo del candado con https, esto garantiza que sus datos se envían con total seguridad a nuestros operadores que se encargarán de enviar el producto. Puedes leer nuestra política de privacidad para saber más</p>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <a>4. ¿Puedo tener más información?</a>
-                            <div class="content">
-                            <p>¡Por supuesto! Si aún no ha completado el formulario de pedido y no está seguro de qué hacer, al completarlo, uno de nuestros operadores lo contactará por teléfono para responder a todas sus preguntas antes de comprar.</p>
-                            <p>Nel caso avessi già compilato il modulo, ti invitiamo a contattarci alla nostra email.</p>
-                            </div>
-                        </div>
-                        </div>
-            </div>
-            <a href="#order_form" class="mainform-body__btn bbt pulse">PIDE AHORA <span>PAGO CUANDO RECIBES</span> </a>
-        </div>
-    </section>
-    <footer class="footer">
-        <div class="wrap">
-            <img src="assets/images/blank.gif" alt="copyright">
-            <p style="text-align: center">
 
-            </p>
-        </div>
-    </footer>
-<link type="text/css" rel="stylesheet" href="assets/css/roboto.css">
-<script type="text/javascript" src="assets/js/plugins.js"></script>
-<script type="text/javascript" src="assets/js/copyrights.js"></script>
-<link href="assets/css/popup-m1-style.css" rel="stylesheet" type="text/css">
-<script src="assets/js/popup-m1.js" type="text/javascript"></script>
-
-<div id="overlay-popup-m1"></div>
-<div id="m1-form" class="m1modal">
-    <a class="close-m1"></a>
-    <div><div class="popup-m1-title">¡TIENES UNA OFERTA ESPECIA</div>
-        <div class="popup-m1-cont">
-            <div class="popup-m1-text1">¡Le contaremos todo sobre este producto y le ofreceremos las mejores condiciones!</div>
-            <form method="post" class=" orderForm    main-order-form popup-m1-form">
-			<input type="text" name="name" placeholder="Escribe tu nombre" required="">
-			<select id="country_code_selector" style="display: none;">
-				<option value="es" selected>España</option>
-			</select>
-			<input type="tel" name="phone" placeholder="Ingresar teléfono" minlength="5"   required="">
-                <button type="submit">llamame de vuelta</button>
-                <p class="order-error" style="text-align: center; color: #c00; font-size: 13px; margin-top: 10px;"></p>
-            </form>
-        </div>
+<header class="nav">
+    <div class="nav-inner">
+        <div class="brand"><span class="dot">✚</span> Natural Medicine Pro</div>
+        <nav>
+            <button class="nav-toggle" aria-label="Menu" onclick="document.getElementById('menu').classList.toggle('open')">☰</button>
+            <ul id="menu">
+                <li><a href="#health" onclick="closeMenu()">Health at 100%</a></li>
+                <li><a href="#evil" onclick="closeMenu()">Pain &amp; Disease</a></li>
+                <li><a href="#solvable" onclick="closeMenu()">What Can Be Solved</a></li>
+                <li><a href="#philosophy" onclick="closeMenu()">Philosophy</a></li>
+                <li><a href="#voices" onclick="closeMenu()">Voices of Medicine</a></li>
+            </ul>
+        </nav>
     </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+    <span class="kicker">On Health &amp; The Human Body</span>
+    <h1>To be alive is to be <span>whole</span>.<br>Health is worth protecting.</h1>
+    <p class="lead">There is no wealth like health. When the body works in silence, we forget it exists — and that silence is the highest form of freedom a person can own. This page is a reflection on why we should never accept pain and disease as normal.</p>
+    <a class="cta" href="#health">Begin reading ↓</a>
 </div>
 
-<link rel="stylesheet" href="assets/css/enhancer_all_style.css">
+<!-- HEALTH AT 100% -->
+<section id="health" class="wrap">
+    <div class="section-head">
+        <h2>Staying at 100% is not vanity — it is respect for life</h2>
+        <p>The body is the only home we truly cannot move out of. Keeping it at full strength is the quiet foundation beneath every plan, every relationship, and every dream we hope to reach.</p>
+    </div>
+    <div class="grid">
+        <div class="card">
+            <div class="ico">✚</div>
+            <h3>Full capacity</h3>
+            <p>A body at 100% lets the mind think clearly, the heart hope freely, and the day be lived fully. Half-health quietly narrows an entire life.</p>
+        </div>
+        <div class="card">
+            <div class="ico">◎</div>
+            <h3>Prevention over cure</h3>
+            <p>Every habit that guards the body — rest, movement, real food, calm — is an investment. The cheapest medicine is the illness that never arrives.</p>
+        </div>
+        <div class="card">
+            <div class="ico">∞</div>
+            <h3>The whole person</h3>
+            <p>Health is not only the absence of disease. It is a state of complete physical, mental and social well-being — the body and the spirit in balance.</p>
+        </div>
+    </div>
+</section>
 
+<!-- PAIN & DISEASE AS AN EVIL -->
+<section id="evil" class="band">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>Pain, suffering and disease are an evil that should not exist</h2>
+            <p>We have grown used to them, and that habit is dangerous. To normalize suffering is to surrender to it.</p>
+        </div>
+        <div class="prose">
+            <p>Let us say it plainly: <strong>pain is not a teacher we should be grateful for, and disease is not a natural order to be accepted.</strong> They are damage. They break the body's harmony, they steal time, and they diminish what a person could otherwise become. No one was born to hurt.</p>
+            <p>For centuries humanity was told that suffering was destiny — that illness was punishment, and pain the price of being alive. We now know better. Every fever we lower, every fracture we heal, every ache we soothe is a small act of rebellion against an evil that was never meant to have the last word.</p>
+            <p>This does not mean we can erase all of it. It means we should <strong>never make peace with it</strong>. The moment a society decides that pain is normal, it stops fighting to end it — and that is the greatest surrender of all.</p>
+        </div>
+    </div>
+</section>
 
-<link rel="stylesheet" href="assets/css/popup.css">
+<!-- WHAT CAN BE SOLVED -->
+<section id="solvable" class="wrap">
+    <div class="section-head">
+        <h2>Some — not all — can be solved. And that changes everything.</h2>
+        <p>Honesty matters. Not every disease has a cure today, and pretending otherwise is cruel. But a great many of them <span class="lead-word">can</span> be prevented, eased, or fully resolved — and each one that can is worth every effort.</p>
+    </div>
+    <ul class="solve">
+        <li>
+            <span class="mark">✓</span>
+            <div><h4>What we can prevent</h4><p>Movement, nutrition, sleep and early attention stop a large share of chronic conditions before they ever begin. Prevention is quiet, but it is powerful.</p></div>
+        </li>
+        <li>
+            <span class="mark">✓</span>
+            <div><h4>What we can relieve</h4><p>Even where a full cure is not yet possible, joint discomfort, inflammation and everyday pain can very often be softened — enough to give a person their days back.</p></div>
+        </li>
+        <li>
+            <span class="mark">✓</span>
+            <div><h4>What we can heal</h4><p>Countless conditions that once meant a lifetime of suffering are now fully treatable. What seems permanent today may be solvable tomorrow.</p></div>
+        </li>
+        <li>
+            <span class="mark">—</span>
+            <div><h4>And what we must face with honesty</h4><p>Some illnesses still resist us. For those, we owe truth, comfort and dignity — and the promise to keep searching until they, too, can be solved.</p></div>
+        </li>
+    </ul>
+</section>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy" class="band">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>A short philosophy of the body</h2>
+            <p>To care for the body is to take a position on what a human life is worth.</p>
+        </div>
+        <div class="prose">
+            <p>The ancients believed the body was the temple of the soul. Whether or not we keep their language, the idea endures: <strong>we are not passengers riding inside a machine — we are the body, and the body is us.</strong> To neglect it is to neglect ourselves.</p>
+            <p>There is a quiet dignity in taking your health seriously. It is not fear of death; it is love of life. The person who guards their body is not hiding from the world — they are preparing to meet it fully, with strength enough to give.</p>
+            <p>And so the goal is simple, even if the path is not: to live as whole as we can, for as long as we can, and to refuse — gently but firmly — the idea that suffering is simply the way things are.</p>
+        </div>
+    </div>
+</section>
+
+<!-- VOICES / DOCTORS -->
+<section id="voices" class="wrap">
+    <div class="section-head">
+        <h2>Voices of medicine</h2>
+        <p>Across the centuries, healers have said the same thing in different words: protect the body, and never accept suffering as final.</p>
+    </div>
+    <div class="quotes">
+        <blockquote>
+            <p>“Let food be thy medicine and medicine be thy food.”</p>
+            <cite>Hippocrates<span>Ancient Greek physician, father of medicine</span></cite>
+        </blockquote>
+        <blockquote>
+            <p>“The natural healing force within each of us is the greatest force in getting well.”</p>
+            <cite>Hippocrates<span>On the body's power to recover</span></cite>
+        </blockquote>
+        <blockquote>
+            <p>“The good physician treats the disease; the great physician treats the patient who has the disease.”</p>
+            <cite>Sir William Osler<span>Canadian physician, a founder of modern medicine</span></cite>
+        </blockquote>
+        <blockquote>
+            <p>“The doctor of the future will give no medicine, but will interest patients in the care of the human frame.”</p>
+            <cite>Attributed to Thomas Edison<span>On prevention and the body</span></cite>
+        </blockquote>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="foot-inner">
+        <div class="foot-top">
+            <div class="foot-brand"><span class="dot">✚</span> Natural Medicine Pro</div>
+            <div class="foot-links">
+                <a href="#health">Health</a>
+                <a href="#evil">Pain &amp; Disease</a>
+                <a href="#solvable">What Can Be Solved</a>
+                <a href="#philosophy">Philosophy</a>
+                <a href="/terms">Terms &amp; Conditions</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/cookies">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="foot-bottom">
+            <span>&copy; <span id="year">2026</span> www.naturalmedicinepro.online — All rights reserved.</span>
+            <span>
+                <a href="/terms">Terms</a> ·
+                <a href="/privacy">Privacy</a> ·
+                <a href="/cookies">Cookies</a>
+            </span>
+        </div>
+        <p class="disclaimer">The content of this website is provided for general informational and educational purposes only and does not constitute medical advice, diagnosis or treatment. It is not a substitute for the guidance of a qualified physician or other healthcare professional. Always seek the advice of a licensed medical provider with any questions you may have regarding a medical condition.</p>
+    </div>
+</footer>
+
 <script>
-    $(function(){
-       $(document).on("click", "._popup-link", function(){
-          var elem = $(this),
-              target =  elem.data("target"),
-              modal = $("#popup-m1-politicians-container[data-modalname="+target+"]");
-
-          $("body").append(modal);
-          modal.fadeIn();
-          return false;
-       });
-       $(document).on("click", "._popup-close", function(){
-           var elem = $(this),
-               modal = elem.parents("._popup");
-
-           modal.fadeOut();
-           return false;
-       });
-    });
+    document.getElementById('year').textContent = new Date().getFullYear();
+    function closeMenu(){ var m=document.getElementById('menu'); if(m) m.classList.remove('open'); }
 </script>
-<div id="popup-m1-politicians-container" class="_popup" style="display:none;" data-modalname="agreement">
 
-    <div class="overlay"></div>
-    <div id="popup-m1-politicians">
-        <div class="popup-m1-politicians__close _popup-close"></div>
-        <div class="popup-m1-politicians__content">
-            <div class="popup-m1-content">
-                <div class="popup-m1-politicians__title">
-                    <h4>Terms of Use</h4>
-                </div>
-                <div class="popup-m1-politicians__text">
-                    <p>The information provided on this website is for informational purposes only and is not intended as a substitute for advice from your physician or other health care professional or any information contained on or in any product label or packaging. An advice of a physician should always be sought before using any type of supplemental dietary product. The products advertised here are not intended to diagnose, cure or prevent any disease. If there is a change in your medical condition, please stop using the product and immediately consult your health care professional.</p>
-                    <p>Please keep in mind the fact that the results may vary from individual to individual, depending on health status, sex, age and lifestyle.</p>
-                    <p>Be advised that there is a material connection between the Affiliate operating this website and the Provider of the products or services mentioned within it. In addition, the Affiliate may get a monetary commission or non-monetary compensation whenever you take action by clicking on a hyperlink on this website. This includes, but is not limited to, whenever you purchase a product or service from the Provider after clicking an affiliate link on this website.</p>
-                    <p>The site recommends daily sports activities and a proper diet, which are the main factors that lead to a healthy lifestyle.</p>
-                    <p>All trademarks on this website whether registered or not, are the property of their respective owners. Licensed photos for illustrative purposes only, models are not endorsed.</p>
-                    <p>Use of this Website is subject to the following terms and conditions:</p>
-                    <p>The contents of this Website are intended to be used for general information purposes only and may be altered at any time, at our discretion.
-                        Neither we, nor any third parties involved provide a guarantee to the accuracy, timing, performance, completeness or suitability of the information and materials that can be found and are offered on this Website. You acknowledge that such information and materials may include inaccuracies and also that we are not responsible for any errors or problems which may occur due to such inaccuracies.
-                        <br>
-                        The use of the information and materials on this Website is entirely under your own risk, for which we cannot be held responsible. It is your own responsibility to ensure that any products, services or information provided by this Website will meet your specific requirements.
-                        <br>
-                        This Website includes materials that are not in our possession or licensed by us. These materials include, among other things, the design, layout, look, appearance and graphics. The reproduction is totally prohibited as part of the terms and conditions and violates copyright laws.
-                        <br>
-                        From time to time, this Website may also include links to other Websites. These links are provided at your convenience, in order to provide further information or services. It does not automatically mean that we support these Websites. We take no responsibility for the content of Websites to which we link to.
-                        <br>
-                        Please note that we do not lie in connection with the companies mentioned on this Website and that we acknowledge that the products, company names and logos are trademarks of their respective owners. The website is just an advertising source, where reviews and pricing information of the product may be found.
-                        <br><br>
-                        LLC "TD Globus Contract" OGRN 1161832052832 <br>
-                        TIN 1840051997, 426072, Izhevsk, <br>
-                        St. Molodezhnaya, house 35 office 13.
-                    </p>
-                </div>
-                <div class="popup-m1-politicians__close-button _popup-close _popup-close">Close</div>
-            </div>
-        </div>
-    </div>
-    <!-- /popup-m1-politicians -->
-
-</div>
-<!-- popup-m1-politicians-container -->
-
-<!-- popup-m1-politicians-container -->
-<div id="popup-m1-politicians-container" class="_popup" style="display: none" data-modalname="politics">
-
-    <div class="overlay"></div>
-    <div id="popup-m1-politicians">
-        <div class="popup-m1-politicians__close _popup-close"></div>
-        <div class="popup-m1-politicians__content">
-            <div class="popup-m1-content">
-                <div class="popup-m1-politicians__title">
-                    <h4>Privacy Policy</h4>
-                </div>
-                <div class="popup-m1-politicians__text">
-                    <strong>Your Privacy</strong>
-                    <p>Your privacy is important to us. To better protect your privacy we provide this notice explaining our online information practices and the choices you can make about the way your information is collected and used. To make this notice easy to find, we make it available on our homepage and at every point where personally identifiable information may be requested.</p>
-                    <p>Other Third Party ad servers or ad networks may also use cookies to track users activities on this website to measure advertisement effectiveness and other reasons that will be provided in their own privacy policies, the website has no access or control over these cookies that may be used by third party advertisers.</p>
-
-                    <strong>Collection of Personal Information</strong>
-                    <p>When visiting this website, the IP address used to access the site will be logged along with the dates and times of access. This information is purely used to analyze trends, administer the site, track users movement and gather broad demographic information for internal use. Most importantly, any recorded IP addresses are not linked to personally identifiable information.</p>
-
-                    <strong>Links to third party Websites</strong>
-                    <p>We have included links on this site for your use and reference. We are not responsible for the privacy policies on these websites. You should be aware that the privacy policies of these sites may differ from our own.</p>
-
-                    <strong>Changes to this Privacy Statement</strong>
-                    <p>The contents of this statement may be altered at any time, at our discretion.</p>
-                </div>
-                <div class="popup-m1-politicians__close-button _popup-close">Close</div>
-            </div>
-        </div>
-    </div>
-    <!-- /popup-m1-politicians -->
-
-</div>
-<!-- popup-m1-politicians-container -->
-
-<div id="popup-m1-politicians-container" class="_popup" style="display: none" data-modalname="returnPolicy">
-    <div class="overlay"></div>
-    <div id="popup-m1-politicians">
-        <div class="popup-m1-politicians__close _popup-close"></div>
-        <div class="popup-m1-politicians__content">
-            <div class="popup-m1-content">
-                <div class="popup-m1-politicians__title">
-                    <h4>Return Policy</h4>
-                </div>
-                <div class="popup-m1-politicians__text">
-                    <p>If you are not completely happy with any items from your order, you may return them to us within 30 days from the date of delivery (subject to the conditions below) for a refund or store credit (you can choose on your returns form). Please note your returns must be delivered to us within this time frame.</p>
-<strong>Returns &amp; home pick-ups</strong>
-<p>We are pleased to offer a returns collection service to all customers for any purchases that meet our Returns Policy. Every package that we ship out includes a pre-paid returns label.</p>
-<strong>Exchange</strong>
-<p>To avoid disappointment we advise that you place a new order for any items you wish to exchange for and request a refund for your return, as the items you want may sell out in the time it takes for us to receive your return. We are not able to hold items and cannot guarantee their availability prior to receiving your return.</p>
-<strong>Conditions for return</strong>
-<p>Items must be in brand new condition and show no signs of wear with all original packaging, garment tags, and labels still attached. Original shoe boxes and other containers that products are sold in are considered part of the product and must also be returned in undamaged and unused condition. Items returned without their branded packaging will not be accepted.</p>
-<p>We do not accept items that have been damaged by wear and tear, altered, or washed incorrectly (please check washing instructions on all garments before handling). When trying items on, please be sure they do not come in contact with perfumes, sprays, creams, or other chemicals, and be sure to try shoes on a soft clean surface.</p>
-<strong>Fees</strong>
-<p>The delivery cost of the return package will be deducted from the refund amount. This price may vary depending on the weight, volume, and country of the returning package.</p>
-<p>For orders within the European Union, any shipping or gift wrapping fees are non-refundable. Kindly note that for international orders the costs of gift wrapping, shipping, as well as any import taxes and duties paid are non-refundable.</p>
-<p>Please note monitors the number and condition of products returned and orders cancelled by customers. Violations of our returns policy, frequent returns or cancellations will be flagged and may, at our discretion, lead to the closure of your account or future orders being refused.</p>
-<strong>Exclusions</strong>
-<p>Kindly note that we do accept the return of swimwear, but only if the original hygienic sticker (if applicable) was not removed and it’s still in its place.</p>
-<p>Notwithstanding the aforementioned policy, reserves the right to make any final decision in case of refund requests based on unique and/or extraordinary circumstances that might arise from objective difficulties during the return process. Also reserves the right to make the final decision in lieu of the returns policy and/or to charge an additional restocking and processing fee might additionally be applied for.</p>                </div>
-                <div class="popup-m1-politicians__close-button _popup-close">Close</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-
-
-
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/faq.js"></script>
-
-    <script src="assets/js/order.js"></script>
-    <script src="assets/js/phoneMask.js"></script>
-    <script src="/tracker.js"></script>
-</body></html>
+</body>
+</html>

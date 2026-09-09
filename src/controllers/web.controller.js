@@ -1,32 +1,71 @@
 const path = require("path");
+const fs = require("fs");
+const { getOfferCountries } = require("../lib/offerConfig");
 
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
-
-// Países permitidos para ver la landing. El resto se redirige a /blog.
-const ALLOWED_COUNTRIES = ["ES", "CO"];
+const OFFERS_DIR = path.join(PUBLIC_DIR, "offer");
 
 function getCountry(req) {
     return (req.headers["x-vercel-ip-country"] || "").toString().toUpperCase();
 }
 
-function getHome(req, res) {
-    const country = getCountry(req);
-    // Si Vercel detecta el país y NO está permitido, se manda al blog.
-    // Si no hay país (dev/local o no detectado), se muestra la landing.
-    if (country && ALLOWED_COUNTRIES.indexOf(country) === -1) {
-        return res.redirect(302, "/blog/");
+// Solo slugs simples (una carpeta directa bajo /offer). Evita path traversal.
+function isValidSlug(slug) {
+    return /^[a-z0-9][a-z0-9_-]*$/i.test(slug);
+}
+
+// Descubre las ofertas existentes escaneando public/offer/<slug>/index.html.
+function listOfferSlugs() {
+    let entries = [];
+    try {
+        entries = fs.readdirSync(OFFERS_DIR, { withFileTypes: true });
+    } catch (e) {
+        return [];
     }
+    return entries
+        .filter(function (d) {
+            return (
+                d.isDirectory() &&
+                isValidSlug(d.name) &&
+                fs.existsSync(path.join(OFFERS_DIR, d.name, "index.html"))
+            );
+        })
+        .map(function (d) { return d.name; })
+        .sort();
+}
+
+// Página principal informativa (salud / filosofía). Visible para todos.
+function getHome(req, res) {
     res.sendFile(path.join(PUBLIC_DIR, "index.html"));
 }
 
-function getThanks(req, res) {
-    // Sin barra final el navegador resuelve los assets relativos contra la raíz
-    // (/assets/...) en vez de /thanks/assets/..., provocando 404. Redirigimos.
-    if (!req.path.endsWith("/")) {
-        return res.redirect(301, "/thanks/");
+// Handler genérico de ofertas /offer/:slug con filtro por país configurable
+// desde /ds. País no permitido -> /blog. País desconocido (dev) -> pasa.
+async function getOffer(req, res) {
+    const slug = (req.params.slug || "").toString();
+    const indexFile = path.join(OFFERS_DIR, slug, "index.html");
+    if (!isValidSlug(slug) || !fs.existsSync(indexFile)) {
+        return res.status(404).send("Oferta no encontrada");
     }
-    res.sendFile(path.join(PUBLIC_DIR, "thanks", "index.html"));
+
+    const country = getCountry(req);
+    let allowed = [];
+    try {
+        allowed = await getOfferCountries(slug);
+    } catch (e) {
+        console.error("getOffer config error:", e.message);
+    }
+
+    // Lista vacía => sin restricción. Con lista, el país debe estar incluido.
+    if (country && allowed.length && allowed.indexOf(country) === -1) {
+        return res.redirect(302, "/blog/");
+    }
+    res.sendFile(indexFile);
 }
+
+// La página "thanks" pertenece a la oferta hdrosol y vive anidada en
+// public/offer/hdrosol/thanks/. La sirve express.static directamente
+// (con sus assets relativos), por eso ya no necesita controlador.
 
 function getBlog(req, res) {
     // Mismo motivo que en getThanks: sin barra final los assets relativos
@@ -37,4 +76,26 @@ function getBlog(req, res) {
     res.sendFile(path.join(PUBLIC_DIR, "blog", "index.html"));
 }
 
-module.exports = { getHome, getThanks, getBlog };
+// Páginas legales (autocontenidas, sin assets externos).
+function getTerms(req, res) {
+    res.sendFile(path.join(PUBLIC_DIR, "legal", "terms.html"));
+}
+
+function getPrivacy(req, res) {
+    res.sendFile(path.join(PUBLIC_DIR, "legal", "privacy.html"));
+}
+
+function getCookies(req, res) {
+    res.sendFile(path.join(PUBLIC_DIR, "legal", "cookies.html"));
+}
+
+module.exports = {
+    getHome,
+    getOffer,
+    getBlog,
+    getTerms,
+    getPrivacy,
+    getCookies,
+    listOfferSlugs,
+    isValidSlug,
+};

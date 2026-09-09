@@ -1,5 +1,7 @@
 const path = require("path");
 const { recordVisit, listVisitors } = require("../lib/store");
+const { getConfigFor, setOfferCountries } = require("../lib/offerConfig");
+const { listOfferSlugs, isValidSlug } = require("./web.controller");
 
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
 
@@ -62,9 +64,47 @@ async function visitors(req, res) {
     }
 }
 
+// GET /api/offers -> lista de ofertas (descubiertas del filesystem) con su
+// config de países permitidos, para editar el embudo desde /ds.
+async function offersConfig(req, res) {
+    cors(res);
+    if (req.method === "OPTIONS") return res.status(204).end();
+    try {
+        const slugs = listOfferSlugs();
+        const offers = await getConfigFor(slugs);
+        res.setHeader("Cache-Control", "no-store");
+        return res.status(200).json({ offers });
+    } catch (e) {
+        console.error("offersConfig error:", e);
+        return res.status(500).json({ error: "config_failed" });
+    }
+}
+
+// POST /api/offers -> guarda los países permitidos de una oferta.
+// body: { slug, countries: string[] | "ES,CO" }
+async function saveOfferConfig(req, res) {
+    cors(res);
+    if (req.method === "OPTIONS") return res.status(204).end();
+
+    const body = req.body || {};
+    const slug = (body.slug || "").toString();
+
+    if (!isValidSlug(slug) || listOfferSlugs().indexOf(slug) === -1) {
+        return res.status(400).json({ ok: false, error: "invalid_slug" });
+    }
+
+    try {
+        const countries = await setOfferCountries(slug, body.countries);
+        return res.status(200).json({ ok: true, slug, countries });
+    } catch (e) {
+        console.error("saveOfferConfig error:", e);
+        return res.status(500).json({ ok: false, error: "save_failed" });
+    }
+}
+
 // GET /ds -> panel HTML.
 function dashboard(req, res) {
     res.sendFile(path.join(PUBLIC_DIR, "ds.html"));
 }
 
-module.exports = { track, visitors, dashboard };
+module.exports = { track, visitors, dashboard, offersConfig, saveOfferConfig };
