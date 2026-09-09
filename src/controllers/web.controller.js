@@ -68,7 +68,23 @@ async function getOffer(req, res) {
     if (!req.path.endsWith("/")) {
         return res.redirect(301, "/offer/" + slug + "/");
     }
-    res.sendFile(indexFile);
+
+    // Inyecta el tracker automáticamente si el lander no lo trae, para que
+    // TODA oferta subida a /offer/ se monitoree en /ds sin editar el HTML.
+    try {
+        let html = fs.readFileSync(indexFile, "utf8");
+        if (html.indexOf("/tracker.js") === -1) {
+            const tag = '<script src="/tracker.js"></script>';
+            html = /<\/body>/i.test(html)
+                ? html.replace(/<\/body>/i, tag + "\n</body>")
+                : html + "\n" + tag;
+        }
+        res.set("Content-Type", "text/html; charset=utf-8");
+        return res.send(html);
+    } catch (e) {
+        console.error("getOffer read error:", e.message);
+        return res.sendFile(indexFile);
+    }
 }
 
 // La página "thanks" pertenece a la oferta hdrosol y vive anidada en
