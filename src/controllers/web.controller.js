@@ -60,6 +60,14 @@ async function getOffer(req, res) {
     if (country && allowed.length && allowed.indexOf(country) === -1) {
         return res.redirect(302, "/blog/");
     }
+
+    // Forzamos la barra final. Sin ella, un lander con assets RELATIVOS
+    // (assets/...) los resuelve contra /offer/ en vez de /offer/<slug>/ y da
+    // 404. Con la barra, cualquier lander autocontenido (su propia carpeta
+    // assets/ dentro) carga siempre, sin tener que reescribir rutas.
+    if (!req.path.endsWith("/")) {
+        return res.redirect(301, "/offer/" + slug + "/");
+    }
     res.sendFile(indexFile);
 }
 
