@@ -92,7 +92,26 @@ async function listVisitors() {
     });
 
     const onlineCount = visitors.filter(function (v) { return v.online; }).length;
-    return { onlineCount, total: visitors.length, visitors, serverTime: now };
+
+    // Desglose por ruta (pathname) para monitorear cada landing/oferta.
+    // "page" se guarda como hostname + pathname; extraemos solo el pathname.
+    const pages = {};
+    visitors.forEach(function (v) {
+        const raw = v.page || "";
+        const slash = raw.indexOf("/");
+        let path = slash === -1 ? "/" : raw.slice(slash) || "/";
+        // Normaliza la barra final para no duplicar /ruta y /ruta/.
+        if (path.length > 1 && path.charAt(path.length - 1) === "/") path = path.slice(0, -1);
+        if (!pages[path]) pages[path] = { path: path, online: 0, total: 0, hits: 0 };
+        pages[path].total += 1;
+        pages[path].hits += v.hits || 1;
+        if (v.online) pages[path].online += 1;
+    });
+    const byPage = Object.keys(pages)
+        .map(function (k) { return pages[k]; })
+        .sort(function (a, b) { return b.online - a.online || b.total - a.total; });
+
+    return { onlineCount, total: visitors.length, visitors, byPage, serverTime: now };
 }
 
 module.exports = { recordVisit, listVisitors, ONLINE_WINDOW_MS, getDb };
