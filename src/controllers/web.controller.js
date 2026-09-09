@@ -45,7 +45,7 @@ async function getOffer(req, res) {
     const slug = (req.params.slug || "").toString();
     const indexFile = path.join(OFFERS_DIR, slug, "index.html");
     if (!isValidSlug(slug) || !fs.existsSync(indexFile)) {
-        return res.status(404).send("Oferta no encontrada");
+        return res.status(404).sendFile(path.join(PUBLIC_DIR, "404.html"));
     }
 
     const country = getCountry(req);

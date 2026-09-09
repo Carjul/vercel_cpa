@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Page Not Found — Natural Medicine Pro</title>
+<meta name="description" content="The page you were looking for could not be found.">
+<style>
+    :root{
+        --bg:#f6faf7;--surface:#ffffff;--ink:#182420;--muted:#5b6b64;
+        --brand:#1f8a5b;--brand-dark:#136343;--accent:#e8f5ee;--line:#dfeae3;
+        --shadow:0 10px 30px rgba(19,99,67,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+        margin:0;min-height:100vh;display:flex;flex-direction:column;
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+        color:var(--ink);background:var(--bg);line-height:1.65;-webkit-font-smoothing:antialiased;
+    }
+    a{color:var(--brand-dark);text-decoration:none}
+
+    header.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+    .nav-inner{max-width:1080px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:19px;color:var(--ink)}
+    .brand .dot{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--brand-dark));display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:15px}
+    .nav-home{font-size:15px;font-weight:600;color:var(--muted)}
+    .nav-home:hover{color:var(--brand-dark)}
+
+    main{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;padding:70px 22px}
+    .wrap{max-width:620px}
+    .kicker{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-dark);background:var(--accent);padding:7px 14px;border-radius:999px;margin-bottom:24px}
+    .code{
+        font-size:clamp(90px,20vw,150px);line-height:1;font-weight:800;letter-spacing:-.05em;margin:0;
+        background:linear-gradient(135deg,var(--brand),var(--brand-dark));
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--brand-dark);
+    }
+    h1{font-size:clamp(24px,4vw,34px);letter-spacing:-.02em;margin:14px 0 14px;font-weight:800}
+    p.lead{font-size:17px;color:var(--muted);margin:0 auto 32px;max-width:480px}
+    .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .cta{display:inline-block;background:var(--brand-dark);color:#fff;font-weight:700;padding:13px 28px;border-radius:12px;box-shadow:var(--shadow);transition:transform .12s,background .15s}
+    .cta:hover{transform:translateY(-2px);background:var(--brand)}
+    .cta.ghost{background:var(--surface);color:var(--brand-dark);border:1px solid var(--line);box-shadow:none}
+    .cta.ghost:hover{background:var(--accent);transform:translateY(-2px)}
+
+    footer{background:#0f1b16;color:#c8d6cf;padding:38px 22px 26px}
+    .foot-inner{max-width:1080px;margin:0 auto}
+    .foot-top{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .foot-brand{display:flex;align-items:center;gap:10px;font-weight:800;color:#fff;font-size:18px}
+    .foot-brand .dot{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--brand),var(--brand-dark));display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+    .foot-links{display:flex;flex-wrap:wrap;gap:22px;font-size:14.5px}
+    .foot-links a{color:#c8d6cf}
+    .foot-links a:hover{color:#fff}
+    .foot-bottom{padding-top:20px;font-size:13.5px;color:#8ea89c}
+</style>
+</head>
+<body>
+
+<header class="nav">
+    <div class="nav-inner">
+        <a class="brand" href="/"><span class="dot">✚</span> Natural Medicine Pro</a>
+        <a class="nav-home" href="/">← Back to home</a>
+    </div>
+</header>
+
+<main>
+    <div class="wrap">
+        <span class="kicker">Page Not Found</span>
+        <p class="code">404</p>
+        <h1>This page could not be found</h1>
+        <p class="lead">The link may be broken, or the page may have been moved. Let's get you back to solid ground — your health is worth the right path.</p>
+        <div class="actions">
+            <a class="cta" href="/">Return home</a>
+            <a class="cta ghost" href="/#health">Read on health</a>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="foot-inner">
+        <div class="foot-top">
+            <div class="foot-brand"><span class="dot">✚</span> Natural Medicine Pro</div>
+            <div class="foot-links">
+                <a href="/">Home</a>
+                <a href="/terms">Terms &amp; Conditions</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/cookies">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="foot-bottom">
+            &copy; <span id="year">2026</span> www.naturalmedicinepro.online — All rights reserved.
+        </div>
+    </div>
+</footer>
+
+<script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+</body>
+</html>
