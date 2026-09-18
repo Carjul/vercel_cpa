@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const webController = require("../controllers/web.controller");
 const trackController = require("../controllers/track.controller");
+const leadsController = require("../controllers/leads.controller");
 
 const router = Router();
 
@@ -28,6 +29,11 @@ router.all("/api/visitors", trackController.visitors);
 // Config del embudo por ruta/país (leer y guardar desde /ds)
 router.get("/api/offers", trackController.offersConfig);
 router.post("/api/offers", trackController.saveOfferConfig);
+
+// Leads del formulario: POST guarda (desde order.js), GET lista (para /ds)
+router.options("/api/post_user", function (req, res) { leadsController.cors(res); res.status(204).end(); });
+router.post("/api/post_user", leadsController.save);
+router.get("/api/post_user", leadsController.list);
 
 router.get("/ds", trackController.dashboard);
 

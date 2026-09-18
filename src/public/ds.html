@@ -115,6 +115,9 @@
       <button class="navbtn" id="nav-config" onclick="showView('config')">
         <span class="ic">🎯</span> Países por ruta
       </button>
+      <button class="navbtn" id="nav-leads" onclick="showView('leads')">
+        <span class="ic">📥</span> Pedidos
+      </button>
       <div class="side-foot">naturalmedicinepro.online</div>
     </aside>
 
@@ -185,6 +188,35 @@
           </div>
         </div>
       </section>
+
+      <!-- ============ VISTA PEDIDOS ============ -->
+      <section id="view-leads" hidden>
+        <header class="top">
+          <h1>📥 Pedidos recibidos</h1>
+          <div class="stats">
+            <div class="stat"><b id="leadsCount">0</b><span>Total</span></div>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="bar">
+            <span id="leadsStatus">Cargando…</span>
+            <span>· datos capturados por el formulario (antes de enviarse a Dr.Cash)</span>
+          </div>
+          <div class="tablebox">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th><th>Nombre</th><th>Teléfono</th><th>Oferta</th>
+                  <th>País</th><th>Ciudad</th><th>Página</th>
+                </tr>
+              </thead>
+              <tbody id="leadRows">
+                <tr><td colspan="7" class="empty">Cargando…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 
@@ -230,9 +262,12 @@
   function showView(v){
     document.getElementById("view-monitor").hidden = (v !== "monitor");
     document.getElementById("view-config").hidden  = (v !== "config");
+    document.getElementById("view-leads").hidden   = (v !== "leads");
     document.getElementById("nav-monitor").classList.toggle("active", v === "monitor");
     document.getElementById("nav-config").classList.toggle("active", v === "config");
+    document.getElementById("nav-leads").classList.toggle("active", v === "leads");
     if(v === "config") loadOffers();
+    if(v === "leads") loadLeads();
   }
 
   // ---------- estado monitoreo ----------
@@ -398,10 +433,42 @@
         '<tr><td colspan="4" class="empty">Error al cargar la configuración.</td></tr>'; });
   }
 
+  // ---------- pedidos (leads) ----------
+  function renderLeads(data){
+    var list = (data && data.leads) || [];
+    document.getElementById("leadsCount").textContent = (data && data.total) || list.length || 0;
+    document.getElementById("leadsStatus").textContent = "Actualizado " + new Date().toLocaleTimeString();
+    var rows = document.getElementById("leadRows");
+    if(!list.length){
+      rows.innerHTML = '<tr><td colspan="7" class="empty">Aún no hay pedidos guardados.</td></tr>';
+      return;
+    }
+    rows.innerHTML = list.map(function(l){
+      var country = l.country ? (flag(l.country) ? '<span class="flag">'+flag(l.country)+'</span>' : '') + esc(l.country) : '<span class="muted">—</span>';
+      return '<tr>'
+        + '<td>'+esc(fmtTime(l.createdAt))+'</td>'
+        + '<td>'+esc(l.name||"—")+'</td>'
+        + '<td class="ip">'+esc(l.phone||"—")+'</td>'
+        + '<td>'+esc(l.offer||"—")+'</td>'
+        + '<td>'+country+'</td>'
+        + '<td>'+(esc(l.city)||'<span class="muted">—</span>')+'</td>'
+        + '<td class="muted">'+esc(l.page||"—")+'</td>'
+        + '</tr>';
+    }).join("");
+  }
+  function loadLeads(){
+    fetch("/api/post_user?t=" + Date.now(), {cache:"no-store"})
+      .then(function(r){ if(!r.ok) throw new Error("http " + r.status); return r.json(); })
+      .then(function(d){ renderLeads(d); })
+      .catch(function(){ document.getElementById("leadsStatus").textContent = "Error al cargar pedidos (¿MONGO_URI?)"; });
+  }
+
   // ---------- arranque ----------
   load();
   loadKnownOffers();
   setInterval(load, 5000);
+  // Refresca los pedidos solo cuando esa vista está abierta.
+  setInterval(function(){ if(!document.getElementById("view-leads").hidden) loadLeads(); }, 8000);
 </script>
 </body>
 </html>

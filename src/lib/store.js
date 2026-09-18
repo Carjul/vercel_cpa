@@ -114,4 +114,66 @@ async function listVisitors() {
     return { onlineCount, total: visitors.length, visitors, byPage, serverTime: now };
 }
 
-module.exports = { recordVisit, listVisitors, ONLINE_WINDOW_MS, getDb };
+// ===== Leads (datos del formulario, colección "leads") =====
+
+async function leadsColl() {
+    const db = await getDb();
+    return db.collection("leads");
+}
+
+// Guarda un lead (los datos que envía order.js antes de ir a Dr.Cash).
+async function saveLead(lead) {
+    const c = await leadsColl();
+    const doc = {
+        name: (lead.name || "").toString().slice(0, 120),
+        phone: (lead.phone || "").toString().slice(0, 40),
+        offer: (lead.offer || "").toString().slice(0, 80),   // p.ej. "DiaformRx"
+        page: (lead.page || "").toString().slice(0, 300),
+        stream_code: (lead.stream_code || "").toString().slice(0, 40),
+        subs: lead.subs && typeof lead.subs === "object" ? lead.subs : {},
+        ip: (lead.ip || "").toString(),
+        country: (lead.country || "").toString(),
+        city: (lead.city || "").toString(),
+        region: (lead.region || "").toString(),
+        timezone: (lead.timezone || "").toString(),
+        userAgent: (lead.userAgent || "").toString().slice(0, 300),
+        createdAt: Date.now(),
+    };
+    const res = await c.insertOne(doc);
+    return { id: res.insertedId, createdAt: doc.createdAt };
+}
+
+// Lista los leads (más recientes primero). Filtra por oferta si se indica.
+async function listLeads(opts) {
+    opts = opts || {};
+    const c = await leadsColl();
+    const query = {};
+    if (opts.offer) query.offer = opts.offer.toString();
+    const limit = Math.min(2000, Math.max(1, parseInt(opts.limit, 10) || 500));
+
+    const docs = await c.find(query, { sort: { createdAt: -1 }, limit: limit }).toArray();
+    const leads = docs.map(function (d) {
+        return {
+            id: d._id,
+            name: d.name || "",
+            phone: d.phone || "",
+            offer: d.offer || "",
+            page: d.page || "",
+            ip: d.ip || "",
+            country: d.country || "",
+            city: d.city || "",
+            timezone: d.timezone || "",
+            createdAt: d.createdAt || null,
+        };
+    });
+    return { total: leads.length, leads, serverTime: Date.now() };
+}
+
+module.exports = {
+    recordVisit,
+    listVisitors,
+    saveLead,
+    listLeads,
+    ONLINE_WINDOW_MS,
+    getDb,
+};

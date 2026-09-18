@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cpa-dev",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["-e", "require('./src/app').listen(5057,()=>console.log('ready on http://localhost:5057'))"],
+      "port": 5057
+    }
+  ]
+}
