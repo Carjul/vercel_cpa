@@ -99,6 +99,24 @@ kbd{font-family:var(--display);font-size:9px;background:var(--key);border-radius
 @media (max-width:360px){ .phone{border-width:6px;padding-inline:4%} }
 
 /* ---- Escritorio: el juego ocupa toda la ventana ---- */
+/* ---- Pantalla completa táctil en móvil ---- */
+#full{display:none;position:fixed;inset:0;z-index:50;background:#000;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
+body.full #full{display:block}
+body.full .wrap{visibility:hidden}
+#stage{position:absolute;top:0;left:0;transform-origin:0 0}
+#stage canvas{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:contain;background:#000}
+.joy{position:absolute;left:22px;bottom:20px;width:128px;height:128px;border-radius:50%;touch-action:none;
+  background:radial-gradient(circle,rgba(255,255,255,.05),rgba(255,255,255,.12));border:2px solid rgba(255,255,255,.22)}
+.knob{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.6),rgba(77,232,255,.35));border:2px solid rgba(255,255,255,.4)}
+.fbtns{position:absolute;right:22px;bottom:20px;display:flex;align-items:flex-end;gap:14px}
+.tbtn{font-family:var(--display);color:#fff;border:2px solid rgba(255,255,255,.3);background:rgba(20,22,30,.45);border-radius:50%;padding:0;
+  touch-action:none;-webkit-tap-highlight-color:transparent;cursor:pointer;transition:transform .05s,filter .05s}
+.tbtn.fire{width:92px;height:92px;font-size:10px;background:radial-gradient(circle at 40% 35%,rgba(255,79,163,.8),rgba(140,20,80,.55))}
+.tbtn.spc{width:64px;height:64px;font-size:9px;margin-bottom:44px;background:radial-gradient(circle at 40% 35%,rgba(255,194,75,.8),rgba(150,90,10,.55))}
+.tbtn.on{filter:brightness(1.4);transform:scale(.94)}
+.tbar{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
+.tbtn.sm{width:42px;height:42px;font-size:10px;border-radius:12px}
 .hint,.home{display:none}
 @media (min-width:900px) and (hover:hover){
   html,body{height:100%;overflow:hidden}
@@ -120,6 +138,21 @@ kbd{font-family:var(--display);font-size:9px;background:var(--key);border-radius
 </style>
 </head>
 <body>
+
+<div id="full">
+  <div id="stage">
+    <div class="joy" id="joy" aria-label="Palanca de movimiento"><div class="knob" id="knob"></div></div>
+    <div class="fbtns">
+      <button class="tbtn spc" data-act="special" aria-label="Arma especial">ESP</button>
+      <button class="tbtn fire" data-act="fire" aria-label="Disparar">FUEGO</button>
+    </div>
+    <div class="tbar">
+      <button class="tbtn sm" data-act="pause" aria-label="Pausa">II</button>
+      <button class="tbtn sm" data-act="mute" aria-label="Sonido">♪</button>
+      <button class="tbtn sm" data-act="mobfull" aria-label="Salir de pantalla completa">✕</button>
+    </div>
+  </div>
+</div>
 
 <div class="wrap">
   <div class="phone">
@@ -148,7 +181,7 @@ kbd{font-family:var(--display);font-size:9px;background:var(--key);border-radius
         <button class="key" id="k7" data-act="down left" aria-label="7, abajo izquierda"><b>7</b><i class="dir">↙</i></button>
         <button class="key" id="k8" data-act="down" aria-label="8, abajo"><b>8</b><i class="dir">▼</i></button>
         <button class="key" id="k9" data-act="down right" aria-label="9, abajo derecha"><b>9</b><i class="dir">↘</i></button>
-        <button class="key" id="kstar" data-act="mute" aria-label="Sonido"><b>*</b><i class="">SONIDO</i></button>
+        <button class="key" id="kstar" data-act="mobfull" aria-label="Pantalla completa"><b>*</b><i class="dir">PANTALLA</i></button>
         <button class="key" id="k0" data-act="special" aria-label="0, arma especial"><b>0</b><i class="spc">ESPECIAL</i></button>
         <button class="key" id="khash" data-act="pause" aria-label="Pausa"><b>#</b><i class="">PAUSA</i></button>
       </div>
@@ -182,9 +215,9 @@ kbd{font-family:var(--display);font-size:9px;background:var(--key);border-radius
 <script>
 (()=>{
 const PORT=matchMedia('(max-width:899px) and (orientation:portrait), (hover:none) and (orientation:portrait)').matches;
-const W=168,H=PORT?140:96,OY=(H-96)/2,TOP=10;
+const W=168,TOP=10; let H=PORT?140:96,OY=(H-96)/2;
 const cv=document.getElementById('game');
-const S=Math.max(4,Math.min(PORT?8:9,Math.ceil((cv.getBoundingClientRect().width||W*4)*(window.devicePixelRatio||1)/W)));
+let S=Math.max(4,Math.min(PORT?8:9,Math.ceil((cv.getBoundingClientRect().width||W*4)*(window.devicePixelRatio||1)/W)));
 cv.width=W*S; cv.height=H*S; cv.style.aspectRatio=W+' / '+H;
 const ctx=cv.getContext('2d');
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -515,7 +548,7 @@ addEventListener('keyup',e=>{const a=bind[e.code]; if(a)keys[a]=false;});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false;});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&['play','intro','dying','clear'].includes(G.state))G.paused=true;});
 
-document.querySelectorAll('.phone [data-act]').forEach(el=>{
+document.querySelectorAll('[data-act]').forEach(el=>{
   const acts=el.dataset.act.split(' ');
   const down=e=>{e.preventDefault(); el.classList.add('on'); acts.forEach(a=>{if(!keys[a])press(a); keys[a]=true;}); try{el.setPointerCapture(e.pointerId)}catch(_){}};
   const up=()=>{el.classList.remove('on'); acts.forEach(a=>keys[a]=false);};
@@ -526,10 +559,53 @@ cv.addEventListener('pointerdown',e=>{ if(e.button===2){press('special');return;
 const mUp=()=>{keys.mfire=false;}; cv.addEventListener('pointerup',mUp); cv.addEventListener('pointercancel',mUp); cv.addEventListener('lostpointercapture',mUp);
 cv.addEventListener('contextmenu',e=>e.preventDefault());
 const muteLbl=document.getElementById('muteLbl');
+/* ---------- Pantalla completa táctil (móvil) ---------- */
+let FULL=false, ROT=false;
+const stage=document.getElementById('stage'), screenEl=document.querySelector('.screen'), joy=document.getElementById('joy'), knob=document.getElementById('knob');
+function layoutFull(){
+  const w=innerWidth,h=innerHeight; ROT=h>w; const L=ROT?h:w, Sh=ROT?w:h;
+  stage.style.width=L+'px'; stage.style.height=Sh+'px'; stage.style.transform=ROT?`translateX(${w}px) rotate(90deg)`:'none';
+  return [L,Sh];
+}
+function resizeGame(){
+  let disp;
+  if(FULL){const [L,Sh]=layoutFull(); H=Math.max(90,Math.min(140,Math.round(W*Sh/L))); disp=L;}
+  else{H=PORT?140:96; disp=cv.getBoundingClientRect().width;}
+  OY=(H-96)/2;
+  S=Math.max(4,Math.min(9,Math.ceil((disp||W*4)*(window.devicePixelRatio||1)/W)));
+  cv.width=W*S; cv.height=H*S; cv.style.aspectRatio=W+' / '+H;
+  for(const k in NEBS)delete NEBS[k]; BG.lvl=-1;
+  for(const s of BG.stars)s.y=rnd(0,H);
+  if(G.player)G.player.y=clamp(G.player.y,TOP+1,H-8);
+}
+function setFull(on){
+  FULL=on; document.body.classList.toggle('full',on);
+  if(on)stage.prepend(cv); else screenEl.appendChild(cv);
+  resizeGame();
+  try{
+    if(on&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(_){}}).catch(()=>{});
+    if(!on){try{screen.orientation.unlock()}catch(_){} if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});}
+  }catch(e){}
+}
+addEventListener('resize',()=>{if(FULL)resizeGame();});
+let joyId=null;
+function joyMove(e){
+  const r=joy.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+  let dx=e.clientX-cx, dy=e.clientY-cy; if(ROT){const t=dx; dx=dy; dy=-t;}
+  const len=Math.hypot(dx,dy)||1, k=Math.min(1,len/60), nx=dx/len*k, ny=dy/len*k;
+  knob.style.transform=`translate(${nx*38}px,${ny*38}px)`;
+  keys.left=nx<-.35; keys.right=nx>.35; keys.up=ny<-.35; keys.down=ny>.35;
+}
+function joyEnd(){joyId=null; knob.style.transform=''; keys.left=keys.right=keys.up=keys.down=false;}
+joy.addEventListener('pointerdown',e=>{e.preventDefault(); initAudio(); joyId=e.pointerId; try{joy.setPointerCapture(e.pointerId)}catch(_){} joyMove(e);});
+joy.addEventListener('pointermove',e=>{if(e.pointerId===joyId)joyMove(e);});
+joy.addEventListener('pointerup',joyEnd); joy.addEventListener('pointercancel',joyEnd); joy.addEventListener('lostpointercapture',joyEnd);
+
 
 function press(a){
   initAudio();
   if(a==='full'){try{const r=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen(); if(r&&r.catch)r.catch(()=>{});}catch(e){} return;}
+  if(a==='mobfull'){setFull(!FULL); return;}
   if(a==='mute'){muted=!muted; muteLbl.textContent=muted?'MUDO':'SONIDO'; return;}
   if(a==='start'){ if(G.state==='title'||(G.state==='over'&&G.stateT<=0)){newGame(); return;} a='pause'; }
   if(a==='pause'){ if(['play','intro','dying','clear'].includes(G.state)){G.paused=!G.paused; beep(440,.06);} return; }
@@ -834,7 +910,7 @@ function renderOverlay(){
     txt('FIN DEL',W/2,20,8,'#ff4fa3'); txt('JUEGO',W/2,31,8,'#ff4fa3');
     txt('PUNTOS '+String(G.score).padStart(6,'0'),W/2,48,4,'#ffffff');
     if(G.newHi)txt('¡NUEVO RÉCORD!',W/2,57,4,blink?'#ffe066':'#ff9a3c'); else txt('RÉCORD '+String(hi).padStart(6,'0'),W/2,57,4,'#9a95c9');
-    if(G.stateT<=0&&blink)txt(TOUCH?'INICIAR: REINTENTAR':'CLIC O ESPACIO: REINTENTAR',W/2,76,3,'#4de8ff');}
+    if(G.stateT<=0&&blink)txt(TOUCH?(FULL?'FUEGO: REINTENTAR':'INICIAR: REINTENTAR'):'CLIC O ESPACIO: REINTENTAR',W/2,76,3,'#4de8ff');}
   if(G.paused){shade(.6); txt('PAUSA',W/2,38,8,'#ffffff'); if(blink)txt(TOUCH?'PAUSA: SEGUIR':'CLIC O ESPACIO: SEGUIR',W/2,56,3,'#4de8ff');}
   ctx.restore();
 }
@@ -848,7 +924,7 @@ function renderTitle(){
   const sx=((G.t*40)%(W+60))-30, sy=58+Math.sin(G.t*2)*4;
   engine(sx,sy); draw(SHIP,sx,sy);
   draw(CRAB1,W-((G.t*25+40)%(W+30)),50+Math.sin(G.t*2.4)*6);
-  if((G.t*2.5|0)%2===0)txt(TOUCH?'PULSA INICIAR':'CLIC O ESPACIO',W/2,72,4,'#ffffff');
+  if((G.t*2.5|0)%2===0)txt(TOUCH?(FULL?'PULSA FUEGO':'PULSA INICIAR'):'CLIC O ESPACIO',W/2,72,4,'#ffffff');
   txt('RÉCORD '+String(hi).padStart(6,'0'),W/2,85,3,'#9a95c9');
 }
 
